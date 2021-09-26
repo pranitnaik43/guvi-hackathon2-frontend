@@ -4,9 +4,6 @@ import { info } from "../info";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
-  const isAdmin = true;
-  let originalProducts = [];
-
   useEffect(() => {
     var config = {
       method: 'get',
@@ -18,12 +15,9 @@ const Products = () => {
     axios(config).then(response => {
       console.log(response);
       if(response.data!==null && response.data!==undefined) {
-        originalProducts = response.data;
+        let originalProducts = response.data;
         originalProducts.forEach(element => {
           element.isAddedToCart = false;
-          if(isAdmin){
-            element.canEdit = false;
-          }
         });
         setProducts(originalProducts);
       }
