@@ -34,10 +34,17 @@ const Login = ({history}) => {
       axios(config).then(response => {
         var message = JSON.stringify(response.data.message)
         var accessToken = response.data.accessToken;
+        var userId = response.data.userId;
+        var isAdmin = response.data.isAdmin;
         if(accessToken!==null) {
           toast.success("Login Successful", {autoClose: 5000});
           localStorage.setItem('accessToken', accessToken);
+          if(userId!==null)
+            localStorage.setItem('userId', userId);
+          if(isAdmin!==null && isAdmin!==undefined)
+            localStorage.setItem('isAdmin', isAdmin);
           history.push("/home")
+          
         } else {
           toast.error("Registration Failed:"+ message, {autoClose: 5000});
         }
