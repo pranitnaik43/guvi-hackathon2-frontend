@@ -1,15 +1,34 @@
 import { useState, useEffect } from "react";
 import axios from 'axios';
+import { useSelector, useDispatch } from 'react-redux';
+import { ADD, REMOVE } from '../reducers/cartReducer';
 
 const Products = () => {
   const [products, setProducts] = useState([]);
+  const isAdmin = true;
+  let originalProducts = [];
+
+  // Mapping Redux State to Component Props
+  const cartProducts = useSelector((state) => state.cart.products);
+
+  // Mapping Redux Dispatch to Component Props
+  const dispatch = useDispatch();
+  const addToCart = (product) => dispatch({ type: ADD, product: product });
+  const removeFromCart = () => dispatch({ type: REMOVE });
 
   useEffect(() => {
     var url = "http://localhost:3001/"
     axios.get(url+"products").then(response => {
       console.log(response);
       if(response.data!==null && response.data!==undefined) {
-        setProducts(response.data);
+        originalProducts = response.data;
+        originalProducts.forEach(element => {
+          element.isAddedToCart = false;
+          if(isAdmin){
+            element.canEdit = false;
+          }
+        });
+        setProducts(originalProducts);
       }
     });
   }, []);
@@ -25,9 +44,18 @@ const Products = () => {
                 <img src="https://place-hold.it/300x300/666" className="card-img" alt=""/>
                 <div className="card-body d-flex justify-content-between">
                   <h5 className="card-text">{ product.name }</h5>
-                  <button className="btn btn-primary"><i className="fa fa-shopping-cart" aria-hidden="true"></i></button>
+                  {
+                    (!product.isAddedToCart) ? (
+                      <button className="btn btn-primary" 
+                      onClick={ () => { addToCart(product); product.isAddedToCart=true; }}>
+                      Add to Cart<i className="fa fa-shopping-cart" aria-hidden="true"></i></button>
+                    ) : (
+                      <button className="btn btn-danger" 
+                      onClick={ () => { removeFromCart(product); product.isAddedToCart=false; }}>
+                      Remove from Cart</button>
+                    )
+                  }
                 </div>
-                
               </div> 
             </div>
           )})
