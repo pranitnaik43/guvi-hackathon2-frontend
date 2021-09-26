@@ -1,0 +1,11 @@
+body{
+  background-image: linear-gradient(to right, black, aqua);
+}
+.logo {
+  font-family:cursive;
+  color: red;
+}
+.card-img {
+  height: 250px;
+  width: 100%;
+}
