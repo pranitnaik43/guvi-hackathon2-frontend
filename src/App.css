@@ -1,5 +1,5 @@
 body{
-  background-image: linear-gradient(to right, black, aqua);
+  background-image: linear-gradient(to right, black, rgb(4, 97, 97));
 }
 .logo {
   font-family:cursive;
@@ -9,10 +9,3 @@ body{
   height: 250px;
   width: 100%;
 }
-/* .loginForm {
-  width: 500px;
-  position: relative;
-  left: 50%;
-  margin-left: -250px;
-  color: yellow;
-} */

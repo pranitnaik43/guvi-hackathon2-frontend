@@ -34,11 +34,12 @@ const Signup = ({history}) => {
       };
       axios(config).then(response => {
         var message = JSON.stringify(response.data.message)
-        if(message==="Signup Done") {
+        console.log(response);
+        if(response.status === 200) {
           toast.success(message, {autoClose: 5000});
-          history.push("/home")
+          history.push("/login")
         } else {
-          toast.error("Registration Failed:"+ message, {autoClose: 5000});
+          toast.error("Registration Failed: "+ message, {autoClose: 5000});
         }
         console.log();
       }).catch(function (error) {

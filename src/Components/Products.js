@@ -4,32 +4,69 @@ import { info } from "../info";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
+  const [cartProducts, setCartProducts] = useState([]);
+  var config = {
+    method: 'GET',
+    url: info.SERVER_URL+'/products',
+    headers: { 
+      'access-token': localStorage.getItem("accessToken")
+    }
+  };
   useEffect(() => {
-    var config = {
-      method: 'get',
-      url: info.SERVER_URL+'/products',
-      headers: { 
-        'access-token': localStorage.getItem("accessToken")
-      }
-    };
+    let myCartProducts = [];
+
+    //fetch cart products
+    config.method = "GET"; 
+    config.url = info.SERVER_URL+'/cart';
     axios(config).then(response => {
+      if(response.data) {
+        myCartProducts =  response.data;
+        console.log("cart", myCartProducts);
+      }
+
+      //fetch products
+      config.url = info.SERVER_URL+'/products';
+      return axios(config);
+    }).then(response => {
       console.log(response);
-      if(response.data!==null && response.data!==undefined) {
+      if(response.data) {
         let originalProducts = response.data;
         originalProducts.forEach(element => {
-          element.isAddedToCart = false;
+          if(myCartProducts.includes(element.id))
+            element.isAddedToCart = true;
+          else 
+            element.isAddedToCart = false;
         });
+        setCartProducts(myCartProducts);
         setProducts(originalProducts);
       }
     });
   }, []);
 
-  let addToCart = (product) => {
-    
+  let addToCart = (productId) => {
+    config.method = "POST";
+    config.url = info.SERVER_URL+'/cart';
+    config.data = JSON.stringify({ "productId": productId });
+
+    setCartProducts([...cartProducts, productId]);
+    setProducts([...products.map(product => { 
+      if (product._id === productId)
+        product.isAddedToCart = true;
+      return product;
+    })]);
   }
 
-  let removeFromCart = (id) => {
+  let removeFromCart = (productId) => {
+    config.method = "POST";
+    config.url = info.SERVER_URL+'/cart';
+    config.data = JSON.stringify({ "productId": productId });
 
+    setCartProducts([...cartProducts.filter(value => (value!==productId))]);
+    setProducts([...products.map(product => { 
+      if (product._id === productId)
+        product.isAddedToCart = false;
+      return product;
+    })]);
   }
 
   return ( 
@@ -38,11 +75,14 @@ const Products = () => {
         { (products.length>0) ?
         (products.map(product => { 
           return (
-            <div className="col mt-4" key={product._id}>
+            <div className="col my-4" key={product._id}>
               <div className="card">
                 <img src="https://place-hold.it/300x300/666" className="card-img" alt=""/>
-                <div className="card-body d-flex justify-content-between">
-                  <h5 className="card-text">{ product.name }</h5>
+                <div className="card-body">
+                  <div className="d-flex justify-content-around">
+                  <h5 className="text-truncate" title={ product.name }>{ product.name }</h5>
+                  <small>{ "₹" + product.price }</small>
+                  </div>
                   {
                     (!product.isAddedToCart) ? (
                       <button className="btn btn-primary" 

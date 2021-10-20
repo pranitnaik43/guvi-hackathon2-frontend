@@ -32,11 +32,12 @@ const Login = ({history}) => {
         data : data
       };
       axios(config).then(response => {
+        console.log(response);
         var message = JSON.stringify(response.data.message)
         var accessToken = response.data.accessToken;
         var userId = response.data.userId;
         var isAdmin = response.data.isAdmin;
-        if(accessToken!==null) {
+        if(accessToken!==null && response.status===200) {
           toast.success("Login Successful", {autoClose: 5000});
           localStorage.setItem('accessToken', accessToken);
           if(userId!==null)
@@ -44,12 +45,12 @@ const Login = ({history}) => {
           if(isAdmin!==null && isAdmin!==undefined)
             localStorage.setItem('isAdmin', isAdmin);
           history.push("/home")
-          
         } else {
-          toast.error("Registration Failed:"+ message, {autoClose: 5000});
+          toast.error("Login Failed:"+ message, {autoClose: 5000});
         }
       }).catch(function (error) {
-        console.log(error);
+        toast.error("Login Failed:"+ error.response.data.message, {autoClose: 5000});
+        // console.log(error);
       });
     }
   }
