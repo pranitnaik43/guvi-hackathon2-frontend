@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
 import axios from 'axios';
-import { info } from "../info";
+import Product from "./Product";
+import AddProductModal from "./AddProductModal";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
   const [cartProducts, setCartProducts] = useState([]);
+  const [showModal, setShowModal] = useState(false);
   var config = {
     method: 'GET',
-    url: info.SERVER_URL+'/products',
+    url: process.env.REACT_APP_SERVER_URL+'/products',
     headers: { 
       'access-token': localStorage.getItem("accessToken")
     }
@@ -17,20 +19,21 @@ const Products = () => {
 
     //fetch cart products
     config.method = "GET"; 
-    config.url = info.SERVER_URL+'/cart';
+    config.url = process.env.REACT_APP_SERVER_URL+'/cart';
     axios(config).then(response => {
       if(response.data) {
-        myCartProducts =  response.data;
+        myCartProducts =  (response.data) ? (response.data) : [];
         console.log("cart", myCartProducts);
       }
 
       //fetch products
-      config.url = info.SERVER_URL+'/products';
+      config.url = process.env.REACT_APP_SERVER_URL+'/products';
       return axios(config);
     }).then(response => {
-      console.log(response);
+      // console.log(response);
       if(response.data) {
         let originalProducts = response.data;
+        // console.log(originalProducts);
         originalProducts.forEach(element => {
           if(myCartProducts.includes(element.id))
             element.isAddedToCart = true;
@@ -41,11 +44,12 @@ const Products = () => {
         setProducts(originalProducts);
       }
     });
-  }, []);
+    // eslint-disable-next-line
+  }, []);  
 
   let addToCart = (productId) => {
     config.method = "POST";
-    config.url = info.SERVER_URL+'/cart';
+    config.url = process.env.REACT_APP_SERVER_URL+'/cart';
     config.data = JSON.stringify({ "productId": productId });
 
     setCartProducts([...cartProducts, productId]);
@@ -58,7 +62,7 @@ const Products = () => {
 
   let removeFromCart = (productId) => {
     config.method = "POST";
-    config.url = info.SERVER_URL+'/cart';
+    config.url = process.env.REACT_APP_SERVER_URL+'/cart';
     config.data = JSON.stringify({ "productId": productId });
 
     setCartProducts([...cartProducts.filter(value => (value!==productId))]);
@@ -69,38 +73,36 @@ const Products = () => {
     })]);
   }
 
+  const openModal = () => {
+    setShowModal(true);
+  }
+
+  const closeModal = () => {
+    setShowModal(false);
+  }
+
   return ( 
     <>
-      <div className="row row-cols-1 row-cols-lg-4 row-cols-md-3 row-cols-sm-2">
+      <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 m-5">
         { (products.length>0) ?
         (products.map(product => { 
           return (
             <div className="col my-4" key={product._id}>
-              <div className="card">
-                <img src="https://place-hold.it/300x300/666" className="card-img" alt=""/>
-                <div className="card-body">
-                  <div className="d-flex justify-content-around">
-                  <h5 className="text-truncate" title={ product.name }>{ product.name }</h5>
-                  <small>{ "₹" + product.price }</small>
-                  </div>
-                  {
-                    (!product.isAddedToCart) ? (
-                      <button className="btn btn-primary" 
-                      onClick={ () => { addToCart(product); product.isAddedToCart=true; }}>
-                      Add to Cart<i className="fa fa-shopping-cart" aria-hidden="true"></i></button>
-                    ) : (
-                      <button className="btn btn-danger" 
-                      onClick={ () => { removeFromCart(product); product.isAddedToCart=false; }}>
-                      Remove from Cart</button>
-                    )
-                  }
-                </div>
-              </div> 
+              <Product product={product} addToCart={addToCart} removeFromCart={removeFromCart} />
             </div>
           )})
         ) : 
-        ( <p className="text-center">There are no products</p> ) }
+        ( <p className="text-center text-white">There are no products</p> ) }
       </div>
+
+      <button type="button" className="btn btn-primary" onClick={() => {setShowModal(true)}}>
+        Launch
+      </button>
+      <AddProductModal modalTitle="Add Product" 
+        showModal={showModal} 
+        openModal={openModal} 
+        closeModal={closeModal}
+      />
     </>
   );
 }

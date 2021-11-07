@@ -6,8 +6,8 @@ import Nav from './Components/Nav';
 import Products from './Components/Products';
 import Home from './Components/Home';
 import Cart from './Components/Cart';
-import Login from './Components/Login';
-import Signup from './Components/Signup';
+import Login from './Components/Auth/Login';
+import Signup from './Components/Auth/Signup';
 
 function App() {
   return (
