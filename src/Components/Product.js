@@ -1,5 +1,14 @@
 const Product = (props) => {
-  const { product, addToCart, removeFromCart } = props;
+  const { product, addToCart, isAddedToCart } = props;
+
+  const getCurrenyINRformat = (val) => {
+    val = parseFloat(val);
+    return val.toLocaleString("en-IN", {
+      style: 'currency',
+      currency: 'INR',
+    })
+  }
+
   return ( 
     <>
       <div className="card">
@@ -7,19 +16,14 @@ const Product = (props) => {
         <div className="card-body">
           <div className="d-flex justify-content-between">
           <h5 className="text-truncate" title={ product.name }>{ product.name }</h5>
-          <small>{ "₹" + product.price }</small>
+          <small>{ getCurrenyINRformat(product.price) }
+          </small>
           </div>
           <div className="d-flex justify-content-end">
           {
-            (!product.isAddedToCart) ? (
-              <button className="btn btn-primary" 
-              onClick={ () => { addToCart(product); product.isAddedToCart=true; }}>
-              Add to Cart</button>
-            ) : (
-              <button className="btn btn-danger" 
-              onClick={ () => { removeFromCart(product); product.isAddedToCart=false; }}>
-              Remove from Cart</button>
-            )
+            <button className="btn btn-primary" 
+            onClick={ () => { addToCart(product._id); }} 
+            disabled={isAddedToCart(product._id)}><i className="bi bi-cart-plus-fill"></i> Add to Cart</button>
           }
           </div>
         </div>

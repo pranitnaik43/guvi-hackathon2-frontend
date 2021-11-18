@@ -23,6 +23,7 @@ const Nav = ({ history }) => {
                 <NavLink className="nav-link" to="/home">Home</NavLink>
                 <NavLink className="nav-link" to="/products">Products</NavLink>
                 <NavLink className="nav-link" to="/cart">View Cart</NavLink>
+                <NavLink className="nav-link" to="/Orders">Rented Products</NavLink>
               </>
             ) : (<></>)
           }

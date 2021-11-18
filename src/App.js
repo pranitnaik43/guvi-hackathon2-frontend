@@ -8,6 +8,7 @@ import Home from './Components/Home';
 import Cart from './Components/Cart';
 import Login from './Components/Auth/Login';
 import Signup from './Components/Auth/Signup';
+import Orders from './Components/Orders';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route exact path="/home" component={Home}></Route>
             <Route path="/products" component={Products}></Route>
             <Route path="/products/:id" component={Products}></Route>
+            <Route path="/orders" component={Orders}></Route>
             <Route path="/cart" component={Cart}></Route>
             <Route path="/login" component={Login}></Route>
             <Route path="/signup" component={Signup}></Route>

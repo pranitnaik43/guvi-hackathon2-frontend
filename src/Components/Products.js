@@ -15,33 +15,20 @@ const Products = () => {
     }
   };
   useEffect(() => {
-    let myCartProducts = [];
+    //fetch products
+    config.url = process.env.REACT_APP_SERVER_URL+'/products';
+    axios(config).then(response => {
+      // console.log(response);
+      if(response.data) {
+        setProducts(response.data);
+      }
+    });
 
     //fetch cart products
-    config.method = "GET"; 
     config.url = process.env.REACT_APP_SERVER_URL+'/cart';
     axios(config).then(response => {
       if(response.data) {
-        myCartProducts =  (response.data) ? (response.data) : [];
-        console.log("cart", myCartProducts);
-      }
-
-      //fetch products
-      config.url = process.env.REACT_APP_SERVER_URL+'/products';
-      return axios(config);
-    }).then(response => {
-      // console.log(response);
-      if(response.data) {
-        let originalProducts = response.data;
-        // console.log(originalProducts);
-        originalProducts.forEach(element => {
-          if(myCartProducts.includes(element.id))
-            element.isAddedToCart = true;
-          else 
-            element.isAddedToCart = false;
-        });
-        setCartProducts(myCartProducts);
-        setProducts(originalProducts);
+        setCartProducts(response.data);
       }
     });
     // eslint-disable-next-line
@@ -49,28 +36,22 @@ const Products = () => {
 
   let addToCart = (productId) => {
     config.method = "POST";
-    config.url = process.env.REACT_APP_SERVER_URL+'/cart';
-    config.data = JSON.stringify({ "productId": productId });
+    config.url = process.env.REACT_APP_SERVER_URL+'/cart/addProduct';
+    config.data = { "productId": productId };
+    axios(config).then(response => {
+      if(response.data.error) {
+        console.log("Error: ", response.data.error);
+      }
+    });
 
     setCartProducts([...cartProducts, productId]);
-    setProducts([...products.map(product => { 
-      if (product._id === productId)
-        product.isAddedToCart = true;
-      return product;
-    })]);
   }
 
-  let removeFromCart = (productId) => {
-    config.method = "POST";
-    config.url = process.env.REACT_APP_SERVER_URL+'/cart';
-    config.data = JSON.stringify({ "productId": productId });
-
-    setCartProducts([...cartProducts.filter(value => (value!==productId))]);
-    setProducts([...products.map(product => { 
-      if (product._id === productId)
-        product.isAddedToCart = false;
-      return product;
-    })]);
+  const isAddedToCart = (id) => {
+    if(cartProducts && cartProducts.includes(id)) {
+      return true;
+    }
+    return false;
   }
 
   const openModal = () => {
@@ -83,12 +64,13 @@ const Products = () => {
 
   return ( 
     <>
-      <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 m-5">
+      {/* {console.log("cart: ", cartProducts)} */}
+      <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 m-5 d-flex justify-content-center">
         { (products.length>0) ?
         (products.map(product => { 
           return (
             <div className="col my-4" key={product._id}>
-              <Product product={product} addToCart={addToCart} removeFromCart={removeFromCart} />
+              <Product product={product} addToCart={addToCart} isAddedToCart={isAddedToCart}/>
             </div>
           )})
         ) : 
