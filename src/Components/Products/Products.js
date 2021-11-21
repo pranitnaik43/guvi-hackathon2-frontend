@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import axios from 'axios';
 import Product from "./Product";
-import AddProductModal from "./AddProductModal";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
   const [cartProducts, setCartProducts] = useState([]);
-  const [showModal, setShowModal] = useState(false);
+  
   var config = {
     method: 'GET',
     url: process.env.REACT_APP_SERVER_URL+'/products',
@@ -20,6 +19,7 @@ const Products = () => {
     axios(config).then(response => {
       // console.log(response);
       if(response.data) {
+        response.data.reverse();
         setProducts(response.data);
       }
     });
@@ -54,14 +54,6 @@ const Products = () => {
     return false;
   }
 
-  const openModal = () => {
-    setShowModal(true);
-  }
-
-  const closeModal = () => {
-    setShowModal(false);
-  }
-
   return ( 
     <>
       {/* {console.log("cart: ", cartProducts)} */}
@@ -76,15 +68,6 @@ const Products = () => {
         ) : 
         ( <p className="text-center text-white">There are no products</p> ) }
       </div>
-
-      <button type="button" className="btn btn-primary" onClick={() => {setShowModal(true)}}>
-        Launch
-      </button>
-      <AddProductModal modalTitle="Add Product" 
-        showModal={showModal} 
-        openModal={openModal} 
-        closeModal={closeModal}
-      />
     </>
   );
 }

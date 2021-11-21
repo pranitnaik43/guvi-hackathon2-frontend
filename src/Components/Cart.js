@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { orderPaymentStatus } from './Constants';
 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -8,12 +9,6 @@ toast.configure()
 const Cart = ({ history }) => {
   const [data, setData] = useState([]);
   const [total, setTotal] = useState([]);
-
-  const orderPaymentStatus = {
-    PENDING: "Pending",
-    PAID: "Paid",
-    FAILED: "Failed",
-  }
 
   var config = {
     method: 'GET',
@@ -146,9 +141,9 @@ const Cart = ({ history }) => {
           response.razorpay_order_id,
           response.razorpay_signature
         );
-        try{
+
         //add the razorpay response to order details in DB
-        let a = await axios({
+        await axios({
           method: "PUT",
           url: process.env.REACT_APP_SERVER_URL + "/orders/" + orderDetails.id,
           headers: {
@@ -159,37 +154,9 @@ const Cart = ({ history }) => {
             razorpayResponse: response
           }
         });
-        console.log("a",a);
 
-        // let order = await axios({
-        //   method: "GET",
-        //   url: process.env.REACT_APP_SERVER_URL + "/orders/" + orderDetails.id,
-        //   headers: {
-        //     'access-token': localStorage.getItem("accessToken")
-        //   }
-        // });
-
-        // console.log("order: ", order);
-        // if (order && order.paymentStatus === orderPaymentStatus.PAID) {
-        //empty the cart
-        
-          let b = await axios({
-            method: "delete",
-            url: process.env.REACT_APP_SERVER_URL + '/cart',
-            headers: {
-              'access-token': localStorage.getItem("accessToken")
-            }
-          });
-          console.log("b", b);
-        }
-        catch(e) {
-          console.log("error emptying cart:", e);
-        }
-
-        //change state
-        setData([]);
-        toast.success("Order Placed", { autoClose: 5000 });
-        // }
+        //redirect to success payment page to empty the cart and raise toast
+        history.push("/payment-success/"+orderDetails.id);
       }
     };
 

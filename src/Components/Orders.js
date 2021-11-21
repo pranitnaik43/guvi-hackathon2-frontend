@@ -11,6 +11,11 @@ const Orders = () => {
     }
   };
 
+  const getDate = (timestamp, prefix="") => {
+    // return (typeof timestamp === typeof Date) ? (prefix + timestamp.toLocaleDateString()) : "";
+    return timestamp;
+  }
+
   useEffect(() => {
     //fetch orders
     config.url = process.env.REACT_APP_SERVER_URL+'/orders';
@@ -18,6 +23,7 @@ const Orders = () => {
       let response = await axios(config);
       if(response.data) {
         console.log(response.data);
+        response.data.reverse();
         setOrders(response.data);
       }
     })();
@@ -38,7 +44,7 @@ const Orders = () => {
                 <div className="col-12 col-md-10 col-lg-8" key={order._id}>
                   <div className="card mt-3">
                     <div className="card-header d-flex">
-                      <div>{(order.timestamp) ? (order.timestamp.toLocaleString("en-IN", {dateStyle: "long"})) : ('')}</div>
+                      <div>{(order.timestamp) ? getDate(order.timestamp) : ('')}</div>
                       <div className="ml-auto">Total</div>
                     </div>
                       <ul className="list-group list-group-flush">
