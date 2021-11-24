@@ -7,6 +7,8 @@ Netlify URL: https://guvi-hackathon2-pranit.netlify.app
 Heroku_URL: https://guvi-hackathon2-backend-43.herokuapp.com
 
 
-Razorpay card for making test payments:
+## Razorpay card for making test payments:
 5267 3181 8797 5449
-![image](https://user-images.githubusercontent.com/37235986/143155927-5297e7a1-2a94-4bc4-927f-7f848015b566.png)
+
+![image](https://user-images.githubusercontent.com/37235986/143156054-38d33198-4261-4dcc-b936-b144aea3119d.png)
+
