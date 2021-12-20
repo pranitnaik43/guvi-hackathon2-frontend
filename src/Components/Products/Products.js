@@ -17,8 +17,7 @@ const Products = () => {
     //fetch products
     config.url = process.env.REACT_APP_SERVER_URL+'/products';
     axios(config).then(response => {
-      // console.log(response);
-      if(response.data) {
+      if(response.data && Array.isArray(response.data)) {
         response.data.reverse();
         setProducts(response.data);
       }
@@ -27,7 +26,7 @@ const Products = () => {
     //fetch cart products
     config.url = process.env.REACT_APP_SERVER_URL+'/cart';
     axios(config).then(response => {
-      if(response.data) {
+      if(response.data  && Array.isArray(response.data)) {
         setCartProducts(response.data);
       }
     });

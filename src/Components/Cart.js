@@ -112,7 +112,8 @@ const Cart = ({ history }) => {
         'access-token': localStorage.getItem("accessToken")
       },
       data: {
-        productDetails: data
+        productDetails: data,
+        timestamp: new Date()
       }
     });
     if (response && response.data)
@@ -156,7 +157,7 @@ const Cart = ({ history }) => {
         });
 
         //redirect to success payment page to empty the cart and raise toast
-        history.push("/payment-success/"+orderDetails.id);
+        history.push("/payment-success/" + orderDetails.id);
       }
     };
 
@@ -189,52 +190,56 @@ const Cart = ({ history }) => {
     rzp1.open();
   }
 
-return (
-  <div className="container px-4 px-lg-5 my-5">
-    {console.log(data)}
-    <header>
-      <h1 className=" text-primary text-center">My Cart</h1>
-    </header>
-    <hr />
-    {
-      (data && data.length > 0) ? (
-        <>
-          {
-            <div style={{ marginBottom: "100px" }}>
-              {
-                data.map(product => (
-                  <div className="card p-5 mt-2" key={product._id}>
-                    <button className="border-0 position-absolute" style={{ top: "0.5rem", right: "0.5rem" }} onClick={() => removeFromCart(product._id)}><i className="fa fa-times"></i></button>
-                    <div className="row">
-                      <div className="col-12 col-md-6 col-lg-5 col-xl-4">
-                        <img className="img-thumbnail" src={product.img} alt="..." />
-                      </div>
-                      <div className="col-12 col-md-6 col-lg-7 col-xl-8">
-                        <div className="card-body border h-100">
-                          <h2 className="card-title">{product.name}</h2>
-                          <h5 className="card-subtitle mb-2 text-muted"> {getCurrenyINRformat(product.price)} </h5>
-                          <div className="input-group mt-2 mt-md-2 mt-lg-3">
-                            <span className="input-group-text bg-white w-75 text-center">Quantity</span>
-                            <input type="number" className="form-control w-25" min="1" value={product.quantity} onChange={(e) => setQuantity(product._id, e.target.value)} />
+  return (
+    <div className="container px-4 px-lg-5 my-5">
+      {console.log(data)}
+      <header>
+        <h1 className=" text-primary text-center">My Cart</h1>
+      </header>
+      <hr />
+      {
+        (data && data.length > 0) ? (
+          <>
+            {
+              <div style={{ marginBottom: "100px" }}>
+                {
+                  data.map(product => (
+                    <div className="card p-5 mt-2" key={product._id}>
+                      <button className="border-0 position-absolute" style={{ top: "0.5rem", right: "0.5rem" }} onClick={() => removeFromCart(product._id)}><i className="fa fa-times"></i></button>
+                      <div className="row">
+                        <div className="col-12 col-md-6 col-lg-5 col-xl-4">
+                          <div className="d-flex h-100 justify-content-center align-items-center p-3 bg-secondary">
+                            <div className="bg bg-dark">
+                              <img src={process.env.REACT_APP_SERVER_URL + "/thumbnail/" + product.thumbnail} onError={(e) => { e.target.onerror = null; e.target.src = "https://place-hold.it/300x300/666" }} className="img-fluid d-block rounded border border-white" alt="thumbnail" />
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col-12 col-md-6 col-lg-7 col-xl-8">
+                          <div className="card-body border h-100">
+                            <h2 className="card-title">{product.name}</h2>
+                            <h5 className="card-subtitle mb-2 text-muted"> {getCurrenyINRformat(product.price)} </h5>
+                            <div className="input-group mt-2 mt-md-2 mt-lg-3">
+                              <span className="input-group-text bg-white w-75 text-center">Quantity</span>
+                              <input type="number" className="form-control w-25" min="1" value={product.quantity} onChange={(e) => setQuantity(product._id, e.target.value)} />
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))
-              }
+                  ))
+                }
+              </div>
+            }
+            <div className="bg-dark d-flex justify-content-between fixed-bottom px-5 py-4 mx-3">
+              <h5 className="text-white">Total Price: <span>{total}</span></h5>
+              <button className="btn btn-primary" onClick={payBill}>Pay</button>
             </div>
-          }
-          <div className="bg-dark d-flex justify-content-between fixed-bottom px-5 py-4 mx-3">
-            <h5 className="text-white">Total Price: <span>{total}</span></h5>
-            <button className="btn btn-primary" onClick={payBill}>Pay</button>
-          </div>
-        </>
+          </>
 
-      ) : (<h5 className="text-center text-info">Cart is empty</h5>)
-    }
-  </div>
-);
+        ) : (<h5 className="text-center text-info">Cart is empty</h5>)
+      }
+    </div>
+  );
 }
 
 export default Cart;

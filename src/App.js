@@ -4,7 +4,6 @@ import Nav from './Components/Nav';
 import Products from './Components/Products/Products';
 import AddProduct from './Components/Products/AddProduct';
 import EditProduct from './Components/Products/EditProduct';
-import Home from './Components/Home';
 import Cart from './Components/Cart';
 import Login from './Components/Auth/Login';
 import Signup from './Components/Auth/Signup';
@@ -18,8 +17,7 @@ function App() {
       <Nav />
       <div className="container-fluid">
         <Switch>
-          <Route exact path="/home" component={Home}></Route>
-          <Route path="/products" component={Products}></Route>
+          <Route exact path="/home" component={Products}></Route>
           <Route path="/products/:id" component={Products}></Route>
           <Route path="/add-product" component={AddProduct}></Route>
           <Route path="/edit-product/:id" component={EditProduct}></Route>
